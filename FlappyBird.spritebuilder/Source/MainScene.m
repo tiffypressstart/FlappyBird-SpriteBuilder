@@ -184,7 +184,7 @@
             ground.position = ccp(ground.position.x + 2 * ground.contentSize.width, ground.position.y);
         }
     }
-    
+  
     for (CCNode *cloud in _clouds)
     {
         CGPoint cloudWorldPosition = [_parallaxBackground convertToWorldSpace:cloud.position];
