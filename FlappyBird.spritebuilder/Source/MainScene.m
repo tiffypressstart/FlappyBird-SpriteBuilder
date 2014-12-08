@@ -9,7 +9,28 @@
 #import "MainScene.h"
 #import "Obstacle.h"
 
+@interface CGPointObject : NSObject
+{
+    CGPoint _ratio;
+    CGPoint _offset;
+    CCNode *__unsafe_unretained _child; //weak ref
+}
+
+@property (nonatomic, readwrite) CGPoint ratio;
+@property (nonatomic, readwrite) CGPoint offset;
+@property (nonatomic, readwrite, unsafe_unretained) CCNode *child;
++(id) pointWithCGPoint: (CGPoint) point offset: (CGPoint) offset;
+-(id) initWithCGPoint: (CGPoint) point offset: (CGPoint) offset;
+@end
+
 @implementation MainScene {
+    
+    CGPoint _cloudParallaxRatio;
+    CGPoint _bushParallaxRatio;
+    
+    CCNode *_parallaxContainer;
+    CCParallaxNode *_parallaxBackground;
+    
     CCNode *_ground1;
     CCNode *_ground2;
     NSArray *_grounds;
@@ -40,10 +61,18 @@
 
 - (void)didLoadFromCCB {
     self.userInteractionEnabled = TRUE;
+   
     
     _grounds = @[_ground1, _ground2];
     _clouds = @[_cloud1, _cloud2];
     _bushes = @[_bush1, _bush2];
+    
+    
+    [_parallaxContainer addChild:_parallaxBackground];
+    
+    // Note that the bush ratio is larger than the cloud
+    _bushParallaxRatio = ccp(0.9,1);
+    _cloudParallaxRatio = ccp(0.5,1);
     
     for (CCNode *ground in _grounds) {
         // set collision txpe
@@ -158,24 +187,43 @@
     
     for (CCNode *cloud in _clouds)
     {
+        CGPoint cloudWorldPosition = [_parallaxBackground convertToWorldSpace:cloud.position];
+        CGPoint cloudScreenPosition = [self convertToNodeSpace: cloudWorldPosition];
+        
         //to move cloud
         cloud.position = ccp(cloud.position.x - (character.physicsBody.velocity.x * delta), cloud.position.y);
         //to move it to the right and if the left corner is complete width off the sceen
-        if (cloud.position.x <= (-1 * cloud.contentSize.width))
+        if (cloudScreenPosition.x <= (-1 * cloud.contentSize.width))
         {
-            cloud.position = ccp(cloud.position.x + 2 * cloud.contentSize.width, cloud.position.y);
+            for (CGPointObject *child in _parallaxBackground.parallaxArray){
+                if (child.child == cloud){
+                    cloud.position = ccp(cloud.position.x + 2 * cloud.contentSize.width, cloud.position.y);
+
+                }
+            }
         }
             
     }
     
     for (CCNode *bush in _bushes)
     {
+        //get the world position of the bush
+        CGPoint bushWorldPosition = [_parallaxBackground convertToWorldSpace:bush.position];
+        CGPoint bushScreenPosition = [self convertToNodeSpace:bushWorldPosition];
+        
+        //if the left corner is one complete width
         //to move cloud
-        bush.position = ccp(bush.position.x - (character.physicsBody.velocity.x * delta), bush.position.y);
+
+       // bush.position = ccp(bush.position.x - (character.physicsBody.velocity.x * delta), bush.position.y);
         //to move it to the right and if the left corner is complete width off the sceen
-        if (bush.position.x <= (-1 * bush.contentSize.width))
+        if (bushScreenPosition.x <= (-1 * bush.contentSize.width))
         {
-            bush.position = ccp(bush.position.x + 2 * bush.contentSize.width, bush.position.y);
+            for (CGPointObject *child in _parallaxBackground.parallaxArray){
+                if (child.child == bush){
+                    bush.position = ccp(bush.position.x + 2 * bush.contentSize.width, bush.position.y);
+                }
+            }
+            
         }
         
     }
