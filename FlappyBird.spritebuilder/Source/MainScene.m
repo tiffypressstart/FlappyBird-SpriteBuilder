@@ -191,7 +191,7 @@
         CGPoint cloudScreenPosition = [self convertToNodeSpace: cloudWorldPosition];
         
         //to move cloud
-        cloud.position = ccp(cloud.position.x - (character.physicsBody.velocity.x * delta), cloud.position.y);
+        //cloud.position = ccp(cloud.position.x - (character.physicsBody.velocity.x * delta), cloud.position.y);
         //to move it to the right and if the left corner is complete width off the sceen
         if (cloudScreenPosition.x <= (-1 * cloud.contentSize.width))
         {
