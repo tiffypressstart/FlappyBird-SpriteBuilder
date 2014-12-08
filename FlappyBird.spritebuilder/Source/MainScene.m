@@ -188,6 +188,7 @@
     
     physicsNode.position = ccp(physicsNode.position.x - (character.physicsBody.velocity.x * delta), physicsNode.position.y);
     
+    _parallaxBackground.position = ccp(_parallaxBackground.position.x - (character.physicsBody.velocity.x * delta), _parallaxBackground.position.y);
     // loop the ground
     for (CCNode *ground in _grounds) {
         // get the world position of the ground
@@ -197,7 +198,7 @@
         
         // if the left corner is one complete width off the screen, move it to the right
         if (groundScreenPosition.x <= (-1 * ground.contentSize.width)) {
-            ground.position = ccp(ground.position.x + 2 * ground.contentSize.width, ground.position.y);
+            ground.offset = ccp(ground.offset.x + 2 * ground.contentSize.width, ground.offset.y);
         }
     }
   
@@ -213,7 +214,7 @@
         {
             for (CGPointObject *child in _parallaxBackground.parallaxArray){
                 if (child.child == cloud){
-                    cloud.position = ccp(cloud.position.x + 2 * cloud.contentSize.width, cloud.position.y);
+                    cloud.offset = ccp(cloud.offset.x + 2 * cloud.contentSize.width, cloud.offset.y);
 
                 }
             }
@@ -236,7 +237,7 @@
         {
             for (CGPointObject *child in _parallaxBackground.parallaxArray){
                 if (child.child == bush){
-                    bush.position = ccp(bush.position.x + 2 * bush.contentSize.width, bush.position.y);
+                    bush.position = ccp(bush.offset.x + 2 * bush.contentSize.width, bush.offset.y);
                 }
             }
             
